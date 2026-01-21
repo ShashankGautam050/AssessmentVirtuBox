@@ -13,10 +13,8 @@ extension TextField {
     func textFieldStyle() -> some View {
         self
             .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.blue, lineWidth: 3)
-        }
+            .autocapitalization(.none)
+            .addBgToTextField()
     }
         
 }
@@ -24,10 +22,8 @@ extension SecureField {
     func textFieldStyle() -> some View {
         self
             .padding()
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color.blue, lineWidth: 3)
-        }
+            .addBgToTextField()
+        
     }
         
 }
@@ -62,4 +58,24 @@ extension Image {
     }
 }
 
+struct BtnTouchEffect : ButtonStyle {
+    
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+    }
+}
 
+extension View {
+    func btnTOuchEffect() -> some View {
+        self.buttonStyle(BtnTouchEffect())
+    }
+    
+    func addBgToTextField() -> some View {
+        self
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(Color.blue, lineWidth: 3)
+            }
+    }
+}
