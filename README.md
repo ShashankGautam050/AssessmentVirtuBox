@@ -8,8 +8,6 @@ User authentication is handled **locally**, while task data is stored persistent
 
 ---
 
-## Requirements Fulfilled
-
 ### 1. Authentication
 - Authentication is implemented **locally** as permitted by the assessment guidelines.
 - User login state is maintained within the app.
