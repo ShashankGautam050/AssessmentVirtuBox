@@ -1,5 +1,5 @@
 //
-//  SignInView.swift
+//  ForgotPassword.swift
 //  AssessmentVirtuBox
 //
 //  Created by Shashank Gautam on 22/01/26.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SignInView: View {
+struct ForgotPassword: View {
     @State private var userEmail : String = ""
     @State private var userPassword : String = ""
     @State private var confirmPassword : String = ""
@@ -26,17 +26,17 @@ struct SignInView: View {
                     .imageStyleLoginSignUp()
                 
                 
-                Text("Sign Up")
+                Text("Forget Password")
                     .loginSignUpHeading()
                 
                 
                 TextField("Email", text: $userEmail)
                     .textFieldStyle()
                 
-                SecureField("Password", text: $userPassword)
+                SecureField("New Password", text: $userPassword)
                     .textFieldStyle()
                 
-                SecureField("Confirm Password", text: $confirmPassword)
+                SecureField("Confirm New Password", text: $confirmPassword)
                     .textFieldStyle()
                 
                 Button {
@@ -64,55 +64,43 @@ struct SignInView: View {
                         showAlert = true
                         return
                     }
-                    
-                    
-                    // checking either the given credentials are already register or not
+                    // changing user password
                     let defaults = UserDefaults.standard
-                    
-                    
-                    // all the registered user
-                    var users = defaults.array(forKey: "users") as? [[String: String]] ?? []
-                    
-                    // checking existing user using mail
-                    if users.contains(where: {$0["email"] == userEmail}) {
+                    let registeredUsers = defaults.array(forKey: "users") as? [[String: String]]
+
+                    // Ensure we have a users array
+                    guard var users = registeredUsers, !users.isEmpty else {
+                        return
+                    }
+
+                    // Find the index for the provided email
+                    if let index = users.firstIndex(where: { $0["email"] == userEmail }) {
+                        // Update the password for the found user
+                        users[index]["password"] = userPassword
+                        // Save back to UserDefaults
+                        defaults.set(users, forKey: "users")
+
+                        alertTitle = "Success"
+                        alertMessage = "Password changed successfully"
+                        showAlert = true
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                            dismiss()
+                        }
+                    } else {
                         alertTitle = "Error"
-                        alertMessage = "User already exists,Please login"
+                        alertMessage = "No user registered with this email"
                         showAlert = true
                         return
                     }
                     
-                    // saving new user credentials using userdefaults
-                    let newUser: [String: String] = [
-                        "email": userEmail,
-                        "password": userPassword
-                    ]
-
-                    // append in the array
-                    users.append(newUser)
-                    UserDefaults.standard.set(users, forKey: "users")
-                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
                     
-                    alertTitle = "Success"
-                    alertMessage = "Sign Up Successful"
-                    showAlert = true
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                        dismiss()
-                    }
                 } label: {
-                    Text("Sign Up")
+                    Text("Change Password")
                         .loginSingUpBtnText()
                     
                 }
                 .btnTOuchEffect()
-                
-                Button {
-                    dismiss()
-                } label: {
-                    Text("Already have an account?")
-                        .font(.headline)
-                        .foregroundColor(.secondary)
-                        .padding(.vertical)
-                }
                 
                 
                 Spacer()
@@ -126,5 +114,5 @@ struct SignInView: View {
 }
 
 #Preview {
-    SignInView()
+    ForgotPassword()
 }

@@ -25,12 +25,7 @@ struct ContentView: View {
             ScrollView {
                 VStack(spacing : 12){
                     // code to naviagte to home screen after all the validation 
-                    NavigationLink(
-                        destination: HomeView(),
-                        isActive: $navigateToHome
-                    ) {
-                        EmptyView()
-                    }
+                    
                     Image("login")
                         .imageStyleLoginSignUp()
                     
@@ -64,12 +59,36 @@ struct ContentView: View {
                             showAlert = true
                             return
                         }
-                        alertTitle = "Success"
-                        alertMessage = "Login Successful"
-                        showAlert = true
-                       
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                          navigateToHome = true
+                        
+                        // check either user registered or not,if registered navigate to home screen otherwise show error
+                        let defaults = UserDefaults.standard
+                        guard let registeredUser = defaults.array(forKey: "users") as? [[String: String]] else {
+                            alertTitle = "Error"
+                            alertMessage = "No User Found. Please Sign Up"
+                            showAlert = true
+                            return
+                            
+                        }
+                        // finding matching user
+                        
+                        if let _ = registeredUser.first(where: {$0["email"] == userEmail && $0["password"] == userPassword} ) {
+                            alertTitle = "Success"
+                            alertMessage = "Login Successful"
+                            showAlert = true
+                            
+                            
+                           // setting value true so we can track users current state
+                            UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                            
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                                navigateToHome = true
+                            }
+                        }
+                        else {
+                            alertTitle = "Error"
+                            alertMessage = "Invalid Email or Password"
+                            showAlert = true
+                            return
                         }
                        
 
@@ -78,7 +97,18 @@ struct ContentView: View {
                             .loginSingUpBtnText()
                         
                     }
-                    
+                    .btnTOuchEffect()
+                    HStack{
+                        Spacer()
+                        NavigationLink {
+                            ForgotPassword()
+                        } label: {
+                            Text("Forgot Password?")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                        }
+
+                    }
                     Button {
                         isPresent.toggle()
                     } label: {
@@ -99,6 +129,10 @@ struct ContentView: View {
                         .presentationDragIndicator(.visible)
                 })
                 .padding()
+                .fullScreenCover(isPresented: $navigateToHome){
+                    HomeView()
+                    
+                }
                 .alert(isPresented : $showAlert){
                     AlertManager.showAlert(title: alertTitle, message: alertMessage)
                 }
