@@ -6,84 +6,72 @@
 //
 
 import SwiftUI
+import CoreData
 
 struct AddNewTask: View {
+
+    @Environment(\.managedObjectContext) private var context
     @Environment(\.dismiss) private var dismiss
-    @Binding var fromWhichScreen: String
-    @Binding  var task: [Tasks]
-    @State private var alertTitle = ""
-    @State private var alertMessage = ""
+
+    var taskToEdit: TaskEntity?
     @State private var taskName: String = ""
-    @State private var error : Bool = false
-    @Binding var selectedTask: Tasks?
-    
+    @State private var showError = false
 
     var body: some View {
-        
-      
-        VStack {
-            Text(fromWhichScreen == "HomeView" ? "Add New Task" : "Edit Task")
+        VStack(spacing: 20) {
+            Text(taskToEdit == nil ? "Add New Task" : "Edit Task")
                 .font(.title)
                 .fontWeight(.bold)
-                            
-            TextField("Enter Task", text: $taskName )
+                .padding(.top)
+
+            TextField("Enter task", text: $taskName)
                 .padding()
-                .frame(alignment : .top)
-                .addBgToTextField()
-              
-            Button(action:
-                    {
-                    saveAndUpdateTask()
-            }) {
-                Text(fromWhichScreen == "HomeView" ? "Save Task" : "Update Task")
-                    .loginSingUpBtnText()
-                    
+                .background(Color.gray.opacity(0.2))
+                .cornerRadius(10)
+
+            Button(taskToEdit == nil ? "Save Task" : "Update Task") {
+                saveTask()
             }
-            .padding(.vertical)
+            .foregroundColor(.white)
+            .padding()
+            .background(Color.blue)
+            .cornerRadius(12)
+            .font(.headline)
+            
             .btnTOuchEffect()
+            Spacer()
         }
         .padding()
-        .alert(isPresented : $error){
-            AlertManager.showAlert(title: alertTitle, message: alertMessage)
-        }
-        .onAppear{
-            if let selected = selectedTask{
-                taskName = selected.title
+        .alert("Please enter task", isPresented: $showError) {}
+        .onAppear {
+            if let task = taskToEdit {
+                taskName = task.title!
             }
         }
-        Spacer()
     }
-    
-    private func saveAndUpdateTask() {
-        if taskName.isEmpty {
-            alertTitle = "Error"
-            alertMessage = "Please enter task"
-            error = true
+
+    private func saveTask() {
+        guard !taskName.isEmpty else {
+            showError = true
             return
         }
-        else {
-            if fromWhichScreen == "HomeView" {
-                task.append(Tasks(title: taskName))
-            }
-            else {
-                if let selectedIndex = task.firstIndex(where: {
-                    $0.id == selectedTask!.id
-                }) {
-                    selectedTask?.title = taskName
-                    task[selectedIndex] = selectedTask!
-                   
-                }
-            }
-            TaskManager.saveTasks(task)
-            selectedTask = nil
-            dismiss()
+
+        if let task = taskToEdit {
+            task.title = taskName
+        } else {
+            let newTask = TaskEntity(context: context)
+            newTask.id = UUID()
+            newTask.title = taskName
         }
+
+        try? context.save()
+        dismiss()
     }
-    
-    
 }
+
+
 
 #Preview {
     let task = [Tasks]()
-    AddNewTask(fromWhichScreen: .constant("HomeView"),task: .constant(task), selectedTask: .constant(task.first))
+    AddNewTask()
 }

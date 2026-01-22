@@ -6,62 +6,48 @@
 //
 
 import SwiftUI
-
-
+import CoreData
 
 struct HomeView: View {
     @AppStorage("isLoggedIn") private var isLoggedIn = true
+    @Environment(\.managedObjectContext) private var context
+    @State private var showAddTask = false
+    @State private var showLogout = false
+    @State private var selectedTask: TaskEntity?
 
-    @State private var showAddTask: Bool = false
-    @State private var showLogout: Bool = false
-    @State private var cameFrom : String = ""
-    @State var tasks : [Tasks] = []
-    @State private var selectedTask: Tasks? = nil
+    @FetchRequest(
+        sortDescriptors: [NSSortDescriptor(keyPath: \TaskEntity.title, ascending: true)],
+        animation: .default
+    )
+    private var tasks: FetchedResults<TaskEntity>
+
     var body: some View {
         NavigationStack {
-            List{
-                ForEach(tasks){ task in
-                    Text(task.title)
+            List {
+                ForEach(tasks) { task in
+                    Text(task.title!)
                         .font(.title2)
                         .onTapGesture {
                             selectedTask = task
-                            cameFrom = "EditView"
                             showAddTask = true
                         }
                 }
                 .onDelete(perform: deleteTask)
             }
             .listStyle(.plain)
-            .navigationTitle("TO DO LIST ")
+            .navigationTitle("TO DO LIST")
             .toolbar {
-                
-//                //  EDIT BUTTON (Leading)
-//                ToolbarItem(placement: .navigationBarLeading) {
-//                    Button {
-//                        showAddTask = true
-//                        cameFrom = "EditView"
-//                    } label: {
-//                        Text("Edit")
-//                            .padding()
-//                          
-//                    }
-//
-//
-//                }
-//                
-                //  ADD + LOGOUT (Trailing Menu)
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button {
                             selectedTask = nil
                             showAddTask = true
-                            cameFrom = "HomeView"
                         } label: {
                             Label("Add Task", systemImage: "plus")
                         }
-                        
+
                         Divider()
-                        
+
                         Button(role: .destructive) {
                             showLogout = true
                         } label: {
@@ -71,27 +57,27 @@ struct HomeView: View {
                         Image(systemName: "ellipsis.circle")
                     }
                 }
-                
             }
-            .sheet(isPresented : $showAddTask) {
-                AddNewTask(fromWhichScreen: $cameFrom, task: $tasks,selectedTask : $selectedTask)
+            .sheet(isPresented: $showAddTask) {
+                AddNewTask(taskToEdit: selectedTask)
                     .presentationDragIndicator(.visible)
             }
             .alert(isPresented: $showLogout) {
                 ShowLogoutAlert.logoutAlert(isLoggedIn: $isLoggedIn)
             }
-            .onAppear{
-                 tasks = TaskManager.load() ?? []
-            }
-            .onChange(of: tasks) {newValue in
-                TaskManager.saveTasks(newValue)
-            }
         }
     }
-    private func deleteTask(at offSets : IndexSet){
-         tasks.remove(atOffsets: offSets)
+
+    private func deleteTask(at offsets: IndexSet) {
+        offsets.map { tasks[$0] }.forEach(context.delete)
+        saveContext()
+    }
+
+    private func saveContext() {
+        try? context.save()
     }
 }
+
 #Preview {
     HomeView()
 }

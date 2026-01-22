@@ -6,7 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		5F1624CB2F22AE3E00FF2C93 /* AssessmentVirtuBox.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 5F1624C52F22A4D000FF2C93 /* AssessmentVirtuBox.xcdatamodeld */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		5F1624C62F22A4D000FF2C93 /* AssessmentVirtuBox.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AssessmentVirtuBox.xcdatamodel; sourceTree = "<group>"; };
 		5F6735282F2158C30036CF75 /* AssessmentVirtuBox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AssessmentVirtuBox.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -32,6 +37,7 @@
 		5F67351F2F2158C30036CF75 = {
 			isa = PBXGroup;
 			children = (
+				5F1624C52F22A4D000FF2C93 /* AssessmentVirtuBox.xcdatamodeld */,
 				5F67352A2F2158C30036CF75 /* AssessmentVirtuBox */,
 				5F6735292F2158C30036CF75 /* Products */,
 			);
@@ -119,6 +125,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F1624CB2F22AE3E00FF2C93 /* AssessmentVirtuBox.xcdatamodeld in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +339,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		5F1624C52F22A4D000FF2C93 /* AssessmentVirtuBox.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				5F1624C62F22A4D000FF2C93 /* AssessmentVirtuBox.xcdatamodel */,
+			);
+			currentVersion = 5F1624C62F22A4D000FF2C93 /* AssessmentVirtuBox.xcdatamodel */;
+			path = AssessmentVirtuBox.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 5F6735202F2158C30036CF75 /* Project object */;
 }

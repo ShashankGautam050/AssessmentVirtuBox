@@ -6,10 +6,11 @@
 //
 
 import SwiftUI
+import CoreData
 
 @main
 struct AssessmentVirtuBoxApp: App {
-    
+    let persistentController = PersistentController()
     @AppStorage("isLoggedIn") private var isLoggedIn = false
 
     var body: some Scene {
@@ -17,6 +18,7 @@ struct AssessmentVirtuBoxApp: App {
         WindowGroup {
             if isLoggedIn {
                 HomeView()
+                    .environment(\.managedObjectContext,persistentController.container.viewContext)
             } else {
                 ContentView()
             }
