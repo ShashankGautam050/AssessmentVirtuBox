@@ -83,7 +83,7 @@ User authentication is handled **locally**, while task data is stored persistent
 - Authentication is implemented locally as allowed by the assessment.
 - Core Data is used strictly for database purposes.
 - The app works fully offline.
-- Firebase was not used as it was optional.
+
 
 ---
 
