@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct AssessmentVirtuBoxApp: App {
+    
+    @AppStorage("isLoggedIn") private var isLoggedIn = false
+
     var body: some Scene {
+
         WindowGroup {
-            ContentView()
+            if isLoggedIn {
+                HomeView()
+            } else {
+                ContentView()
+            }
         }
     }
 }
