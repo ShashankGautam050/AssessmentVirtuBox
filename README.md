@@ -42,8 +42,8 @@ User authentication is handled **locally**, while task data is stored persistent
 - **Language:** Swift
 - **UI Framework:** SwiftUI
 - **Database:** Core Data
-- **Architecture:** MVVM (SwiftUI-friendly)
-- **Platform:** iOS
+- **Platform:** iOS 17+ (Minimum Deployment Target)
+
 
 ---
 
