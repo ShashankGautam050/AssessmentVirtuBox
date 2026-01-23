@@ -25,9 +25,7 @@ struct AddNewTask: View {
                 .padding(.top)
 
             TextField("Enter task", text: $taskName)
-                .padding()
-                .background(Color.gray.opacity(0.2))
-                .cornerRadius(10)
+                .textFieldStyle()
 
             Button(taskToEdit == nil ? "Save Task" : "Update Task") {
                 saveTask()

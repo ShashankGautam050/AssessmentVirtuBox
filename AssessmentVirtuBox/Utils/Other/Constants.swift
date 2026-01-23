@@ -14,6 +14,7 @@ extension TextField {
         self
             .padding()
             .autocapitalization(.none)
+            .background(Color.gray.opacity(0.2))
             .addBgToTextField()
     }
         
@@ -22,6 +23,7 @@ extension SecureField {
     func textFieldStyle() -> some View {
         self
             .padding()
+            .background(Color.gray.opacity(0.2))
             .addBgToTextField()
         
     }

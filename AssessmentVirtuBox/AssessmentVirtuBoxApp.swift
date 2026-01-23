@@ -20,7 +20,7 @@ struct AssessmentVirtuBoxApp: App {
                 HomeView()
                     .environment(\.managedObjectContext,persistentController.container.viewContext)
             } else {
-                ContentView()
+                LoginView()
             }
         }
     }
