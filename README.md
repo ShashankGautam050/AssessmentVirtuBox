@@ -2,27 +2,34 @@
 
 ## Overview
 
-AssessmentVirtuBox is an iOS To-Do application developed as part of an assessment.  
-The application is built using **SwiftUI** and follows modern iOS development practices.  
-User authentication is handled **locally**, while task data is stored persistently using **Core Data**.
+AssessmentVirtuBox is an iOS To-Do application developed as part of a technical assessment.  
+The app is built using SwiftUI and follows modern iOS development practices.
+
+- Authentication is implemented locally (as allowed by the assessment).
+- Task data is stored persistently using Core Data.
+- The app supports multiple users, and each user can only access their own tasks.
 
 ---
 
+## Key Functional Requirements
+
 ### 1. Authentication
-- Authentication is implemented **locally** as permitted by the assessment guidelines.
-- User login state is maintained within the app.
+- Authentication is implemented locally.
+- User login state is managed using UserDefaults.
 - Logout functionality is provided with a confirmation alert.
+- On logout, the current user session is cleared.
 
 ### 2. Database
-- The application uses **Core Data** as the local database.
-- Task data is persisted across app launches.
-- No external database or network dependency is required.
+- Core Data is used as the local database.
+- Tasks persist across app launches.
+- Each task is associated with a specific user.
+- Data is filtered using Core Data predicates to ensure user isolation.
 
 ### 3. Task Management (CRUD)
-- **Create**: Add a new task
-- **Read**: Display all saved tasks
-- **Update**: Edit an existing task
-- **Delete**: Remove a task using swipe-to-delete
+- Create: Add a new task
+- Read: Display tasks belonging to the logged-in user
+- Update: Edit an existing task
+- Delete: Remove a task using swipe-to-delete
 
 ---
 
@@ -31,171 +38,197 @@ User authentication is handled **locally**, while task data is stored persistent
 - SwiftUI-based user interface
 - NavigationStack for navigation
 - Sheet presentation for Add/Edit task
-- Core Data integration using `@FetchRequest`
-- Clean and simple user experience
+- Core Data integration using @FetchRequest
+- User-specific data isolation
 - Offline-first functionality
+- Clean and minimal UI
 
 ---
 
 ## Technology Stack
 
-- **Language:** Swift
-- **UI Framework:** SwiftUI
-- **Database:** Core Data
-- **Platform:** iOS 17+ (Minimum Deployment Target)
-
+- Language: Swift
+- UI Framework: SwiftUI
+- Database: Core Data
+- Authentication: Local (UserDefaults)
+- Platform: iOS 17+
+- Architecture: MVVM-style separation (Views, Models, Utilities)
 
 ---
 
 ## Core Data Model
 
-### Entity: `TaskEntity`
+### Entity: TaskEntity
 
-| Attribute | Type | Description |
-|--------|------|------------|
-| `id` | UUID | Unique identifier |
-| `title` | String | Task title |
+| Attribute  | Type  | Description |
+|----------|------|-------------|
+| id       | UUID | Unique identifier |
+| title    | String | Task title |
+| userEmail | String | Email of the logged-in user |
+
+---
+
+## User-Specific Data Handling
+
+The app supports multiple users, and each user only sees their own tasks.
+
+### Implementation Details
+- The logged-in user’s email is stored in UserDefaults.
+- Each task is saved with a userEmail attribute.
+- Tasks are fetched using an NSPredicate that filters tasks for the logged-in user only.
 
 ---
 
 ## Application Flow
 
 1. User logs in using local authentication.
-2. The Home screen displays the list of saved tasks.
-3. User can add a new task using the menu option.
-4. Tapping on an existing task allows editing.
-5. Tasks can be deleted via swipe gesture.
-6. Logout clears the authentication state.
+2. The Home screen displays only the tasks created by the logged-in user.
+3. User can add a new task.
+4. Tapping a task allows editing.
+5. Tasks can be deleted using swipe gesture.
+6. Logout clears the session and returns the user to the login screen.
 
 ---
-##  Manual Test Cases
+
+## Manual Test Cases
 
 ### 1. User Authentication
 
 #### 1.1 Sign Up – Valid Data
-- **Steps**
-  1. Open the app
-  2. Navigate to Sign Up screen
-  3. Enter a valid email
-  4. Enter a password with minimum 8 characters
-  5. Enter matching confirm password
-  6. Tap on Sign Up
-- **Expected Result**
-  - User account is created successfully
-  - User data is stored locally using Core Data
+Steps:
+1. Open the app
+2. Navigate to Sign Up
+3. Enter a valid email
+4. Enter a password (minimum 8 characters)
+5. Enter matching confirm password
+6. Tap Sign Up
 
-#### 1.2 Sign Up – Empty Fields
-- **Steps**
-  1. Leave email or password field empty
-  2. Tap on Sign Up
-- **Expected Result**
-  - Validation error message is shown
+Expected Result:
+- User account is created successfully
+- User data is stored locally
 
-#### 1.3 Sign Up – Password Mismatch
-- **Steps**
-  1. Enter password and different confirm password
-  2. Tap on Sign Up
-- **Expected Result**
-  - Error message is shown indicating password mismatch
+---
+
+#### 1.2 Sign Up – Invalid Data
+Steps:
+1. Leave fields empty or enter mismatched passwords
+2. Tap Sign Up
+
+Expected Result:
+- Validation error message is displayed
 
 ---
 
 ### 2. Login
 
 #### 2.1 Login – Valid Credentials
-- **Steps**
-  1. Open Login screen
-  2. Enter registered email and correct password
-  3. Tap on Login
-- **Expected Result**
-  - User is logged in successfully
-  - User is navigated to Home (To-Do List) screen
+Steps:
+1. Enter registered email and password
+2. Tap Login
 
-#### 2.2 Login – Invalid Credentials
-- **Steps**
-  1. Enter incorrect email or password
-  2. Tap on Login
-- **Expected Result**
-  - Error message is shown for invalid credentials
+Expected Result:
+- User is logged in
+- Home screen is displayed
 
 ---
 
-### 3. To-Do List (CRUD Operations)
+#### 2.2 Login – Invalid Credentials
+Steps:
+1. Enter incorrect email or password
+2. Tap Login
 
-#### 3.1 Add New Task
-- **Steps**
-  1. Tap on Add Task button
-  2. Enter task title
-  3. Tap on Save
-- **Expected Result**
-  - Task is added to the list
-  - Task is saved in Core Data
+Expected Result:
+- Error message is shown
+
+---
+
+### 3. Task Management
+
+#### 3.1 Add Task
+Steps:
+1. Tap Add Task
+2. Enter task title
+3. Save
+
+Expected Result:
+- Task appears in list
+- Task is saved in Core Data for the current user
+
+---
 
 #### 3.2 Edit Task
-- **Steps**
-  1. Tap on an existing task
-  2. Modify the task title
-  3. Tap on Update
-- **Expected Result**
-  - Task is updated successfully
-  - Updated task persists after app relaunch
+Steps:
+1. Tap an existing task
+2. Modify title
+3. Update
+
+Expected Result:
+- Task is updated
+- Changes persist after relaunch
+
+---
 
 #### 3.3 Delete Task
-- **Steps**
-  1. Swipe left on a task
-  2. Tap Delete
-- **Expected Result**
-  - Task is removed from the list
-  - Task is deleted from Core Data
+Steps:
+1. Swipe left on a task
+2. Tap Delete
+
+Expected Result:
+- Task is removed from list
+- Task is deleted from Core Data
 
 ---
 
 ### 4. Logout
 
 #### 4.1 Logout User
-- **Steps**
-  1. Tap on Logout option
-  2. Confirm logout action
-- **Expected Result**
-  - User is logged out
-  - User is redirected to Login screen
+Steps:
+1. Tap Logout
+2. Confirm logout
+
+Expected Result:
+- User session is cleared
+- User is returned to Login screen
 
 ---
 
 ### 5. Data Persistence
 
 #### 5.1 App Relaunch
-- **Steps**
-  1. Close the app
-  2. Reopen the app
-- **Expected Result**
-  - Logged-in state is preserved (if not logged out)
-  - All saved tasks are loaded from Core Data
+Steps:
+1. Close the app
+2. Reopen the app
 
-## How to Run the Project
+Expected Result:
+- User remains logged in (if not logged out)
+- Tasks load correctly from Core Data
 
-1. Open the project in Xcode.
-2. Ensure the Core Data model file is named:
-3. Select an iOS simulator or device.
-4. Build and run the application.
+---
+
+## Git Usage
+
+- Meaningful commit messages
+- Logical separation of features per commit
+- No generated or sensitive files committed
+- Clean commit history following Git best practices
 
 ---
 
 ## Notes
 
-- Authentication is implemented locally as allowed by the assessment.
+- Authentication is implemented locally as allowed.
 - Core Data is used strictly for database purposes.
+- No third-party libraries are used.
 - The app works fully offline.
-
 
 ---
 
 ## Developer
 
-**Shashank Gautam**
+Shashank Gautam
 
 ---
 
 ## Conclusion
 
-This project demonstrates the use of SwiftUI and Core Data to build a functional and persistent To-Do application while adhering strictly to the assessment requirements.
+This project demonstrates a complete SwiftUI-based To-Do application using Core Data, local authentication, and user-specific data isolation, fully aligned with the assessment requirements.
