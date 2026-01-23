@@ -69,6 +69,8 @@ struct LoginView: View {
                             return
                             
                         }
+                        
+                       
                         // finding matching user
                         
                         if let _ = registeredUser.first(where: {$0["email"] == userEmail && $0["password"] == userPassword} ) {
@@ -79,7 +81,7 @@ struct LoginView: View {
                             
                            // setting value true so we can track users current state
                             UserDefaults.standard.set(true, forKey: "isLoggedIn")
-                            
+                            UserDefaults.standard.set(userEmail, forKey: "loggedInUserEmail")
                             DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
                                 navigateToHome = true
                             }

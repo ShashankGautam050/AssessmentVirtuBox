@@ -60,6 +60,7 @@ struct AddNewTask: View {
             let newTask = TaskEntity(context: context)
             newTask.id = UUID()
             newTask.title = taskName
+            newTask.userEmail = UserDefaults.standard.string(forKey: "loggedInUserEmail")
         }
 
         try? context.save()

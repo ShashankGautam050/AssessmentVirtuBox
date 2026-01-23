@@ -9,21 +9,31 @@ import SwiftUI
 import CoreData
 
 struct HomeView: View {
+    
+    init() {
+        let email = UserDefaults.standard.string(forKey: "loggedInUserEmail") ?? ""
+
+        _tasks = FetchRequest(
+            sortDescriptors: [NSSortDescriptor(keyPath: \TaskEntity.title, ascending: true)],
+            predicate: NSPredicate(format: "userEmail == %@", email),
+            animation: .default
+        )
+    }
     @AppStorage("isLoggedIn") private var isLoggedIn = true
     @Environment(\.managedObjectContext) private var context
     @State private var showAddTask = false
     @State private var showLogout = false
     @State private var selectedTask: TaskEntity?
 
-    @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \TaskEntity.title, ascending: true)],
-        animation: .default
-    )
-    private var tasks: FetchedResults<TaskEntity>
+    @FetchRequest var tasks: FetchedResults<TaskEntity>
 
     var body: some View {
         NavigationStack {
             List {
+                if tasks.isEmpty {
+                    Text("No tasks available,create one to remember")
+                        .foregroundColor(.secondary)
+                }
                 ForEach(tasks) { task in
                     Text(task.title!)
                         .font(.title2)

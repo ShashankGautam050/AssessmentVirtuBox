@@ -90,7 +90,7 @@ struct SignInView: View {
                     // append in the array
                     users.append(newUser)
                     UserDefaults.standard.set(users, forKey: "users")
-                    UserDefaults.standard.set(true, forKey: "isLoggedIn")
+                   
                     
                     alertTitle = "Success"
                     alertMessage = "Sign Up Successful"
