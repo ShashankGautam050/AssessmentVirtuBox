@@ -62,6 +62,7 @@ struct AddNewTask: View {
 
         if let task = taskToEdit {
             task.title = taskName
+            task.deadline = selectionDate
         } else {
             let newTask = TaskEntity(context: context)
             newTask.id = UUID()

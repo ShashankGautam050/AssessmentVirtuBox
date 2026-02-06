@@ -48,9 +48,13 @@ struct HomeView: View {
                             }
                         Spacer()
                         if let deadline = task.deadline {
-                            Text(dateFormatter.string(from: deadline))
+                            VStack {
+                                Text("Deadline:")
+                                Text(dateFormatter.string(from: deadline))
+                                    
+                            }
+                            .font(.caption)
                         }
-                     
                        
                     }
                 }
