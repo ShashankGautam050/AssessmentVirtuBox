@@ -24,7 +24,11 @@ struct HomeView: View {
     @State private var showAddTask = false
     @State private var showLogout = false
     @State private var selectedTask: TaskEntity?
-
+    var dateFormatter : DateFormatter {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .medium
+        return formatter
+    }
     @FetchRequest var tasks: FetchedResults<TaskEntity>
 
     var body: some View {
@@ -35,12 +39,20 @@ struct HomeView: View {
                         .foregroundColor(.secondary)
                 }
                 ForEach(tasks) { task in
-                    Text(task.title!)
-                        .font(.title2)
-                        .onTapGesture {
-                            selectedTask = task
-                            showAddTask = true
+                    HStack {
+                        Text(task.title!)
+                            .font(.title2)
+                            .onTapGesture {
+                                selectedTask = task
+                                showAddTask = true
+                            }
+                        Spacer()
+                        if let deadline = task.deadline {
+                            Text(dateFormatter.string(from: deadline))
                         }
+                     
+                       
+                    }
                 }
                 .onDelete(perform: deleteTask)
             }

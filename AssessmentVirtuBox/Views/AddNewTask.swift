@@ -16,7 +16,8 @@ struct AddNewTask: View {
     var taskToEdit: TaskEntity?
     @State private var taskName: String = ""
     @State private var showError = false
-
+    @State private var selectionDate = Date()
+    let startingDate = Calendar.current.startOfDay(for: Date())
     var body: some View {
         VStack(spacing: 20) {
             Text(taskToEdit == nil ? "Add New Task" : "Edit Task")
@@ -26,7 +27,10 @@ struct AddNewTask: View {
 
             TextField("Enter task", text: $taskName)
                 .textFieldStyle()
+            
 
+    
+            DatePicker("Please select deadline", selection: $selectionDate, in: startingDate...,displayedComponents: [.date])
             Button(taskToEdit == nil ? "Save Task" : "Update Task") {
                 saveTask()
             }
@@ -44,6 +48,7 @@ struct AddNewTask: View {
         .onAppear {
             if let task = taskToEdit {
                 taskName = task.title!
+                selectionDate = task.deadline ?? Date()
             }
         }
     }
@@ -53,6 +58,7 @@ struct AddNewTask: View {
             showError = true
             return
         }
+       
 
         if let task = taskToEdit {
             task.title = taskName
@@ -60,6 +66,7 @@ struct AddNewTask: View {
             let newTask = TaskEntity(context: context)
             newTask.id = UUID()
             newTask.title = taskName
+            newTask.deadline = selectionDate
             newTask.userEmail = UserDefaults.standard.string(forKey: "loggedInUserEmail")
         }
 
